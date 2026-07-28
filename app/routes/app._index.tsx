@@ -144,31 +144,72 @@ export default function Index() {
   const generateProduct = () => fetcher.submit({}, { method: "POST" });
 
   return (
-    <s-page heading="Shopify app template">
-      <s-button slot="primary-action" onClick={generateProduct}>
-        Generate a product
-      </s-button>
-
-      <s-section heading="Congrats on creating a new Shopify app 🎉">
+    <s-page heading="Cardora">
+      <s-section heading="Welcome to Cardora">
         <s-paragraph>
-          This embedded app template uses{" "}
-          <s-link
-            href="https://shopify.dev/docs/apps/tools/app-bridge"
-            target="_blank"
-          >
-            App Bridge
-          </s-link>{" "}
-          interface examples like an{" "}
-          <s-link href="/app/additional">additional page in the app nav</s-link>
-          , as well as an{" "}
-          <s-link
-            href="https://shopify.dev/docs/api/admin-graphql"
-            target="_blank"
-          >
-            Admin GraphQL
-          </s-link>{" "}
-          mutation demo, to provide a starting point for app development.
+          Create, manage and track your store's gift cards in one place.
+          <s-image slot="aside" ></s-image>
         </s-paragraph>
+      </s-section>
+      <s-section>
+        <s-heading>Quick Actions</s-heading>
+        <s-stack gap="large-300">
+          <s-paragraph>Choose an action to get started</s-paragraph>
+          <s-grid alignItems="start" gridTemplateColumns="repeat(4, 1fr)" gap="large-100 large-500">
+            <s-grid-item>
+              <s-grid gridTemplateColumns="30% 70%">
+                <s-grid-item>
+                  <div style={{ width: "45px", height: "45px" }}>
+                    <s-image src="/plus-heading.png" />
+                  </div>
+                </s-grid-item>
+                <s-grid-item>
+                  <s-heading>Create Gift Cards</s-heading>
+                  <s-paragraph>Create single or multiple gift cards</s-paragraph>
+                </s-grid-item>
+              </s-grid>
+            </s-grid-item>
+            <s-grid-item>
+              <s-grid gridTemplateColumns="30% 70%">
+                <s-grid-item>
+                  <div style={{ width: "45px", height: "45px" }}>
+                    <s-image src="/pencil-icon.png" />
+                  </div>
+                </s-grid-item>
+                <s-grid-item>
+                  <s-heading>Bulk Editor</s-heading>
+                  <s-paragraph>Edit balances, expiry date and more</s-paragraph>
+                </s-grid-item>
+              </s-grid>
+            </s-grid-item>
+            <s-grid-item>
+              <s-grid gridTemplateColumns="30% 70%">
+                <s-grid-item>
+                  <div style={{ width: "45px", height: "45px" }}>
+                    <s-image src="/import-icon.png" />
+                  </div>
+                </s-grid-item>
+                <s-grid-item>
+                  <s-heading>Import Gift Cards</s-heading>
+                  <s-paragraph>Import Gift Cards via CSV</s-paragraph>
+                </s-grid-item>
+              </s-grid>
+            </s-grid-item>
+            <s-grid-item>
+              <s-grid gridTemplateColumns="30% 70%">
+                <s-grid-item>
+                  <div style={{ width: "45px", height: "45px" }}>
+                    <s-image src="/export-icon.png" />
+                  </div>
+                </s-grid-item>
+                <s-grid-item>
+                  <s-heading>Export Gift Cards</s-heading>
+                  <s-paragraph>Export gift cards data to CSV</s-paragraph>
+                </s-grid-item>
+              </s-grid>
+            </s-grid-item>
+          </s-grid>
+        </s-stack>
       </s-section>
       <s-section heading="Get started with products">
         <s-paragraph>
@@ -277,71 +318,6 @@ export default function Index() {
             </s-stack>
           </s-section>
         )}
-      </s-section>
-
-      <s-section slot="aside" heading="App template specs">
-        <s-paragraph>
-          <s-text>Framework: </s-text>
-          <s-link href="https://reactrouter.com/" target="_blank">
-            React Router
-          </s-link>
-        </s-paragraph>
-        <s-paragraph>
-          <s-text>Interface: </s-text>
-          <s-link
-            href="https://shopify.dev/docs/api/app-home/using-polaris-components"
-            target="_blank"
-          >
-            Polaris web components
-          </s-link>
-        </s-paragraph>
-        <s-paragraph>
-          <s-text>API: </s-text>
-          <s-link
-            href="https://shopify.dev/docs/api/admin-graphql"
-            target="_blank"
-          >
-            GraphQL
-          </s-link>
-        </s-paragraph>
-        <s-paragraph>
-          <s-text>Custom data: </s-text>
-          <s-link
-            href="https://shopify.dev/docs/apps/build/custom-data"
-            target="_blank"
-          >
-            Metafields &amp; metaobjects
-          </s-link>
-        </s-paragraph>
-        <s-paragraph>
-          <s-text>Database: </s-text>
-          <s-link href="https://www.prisma.io/" target="_blank">
-            Prisma
-          </s-link>
-        </s-paragraph>
-      </s-section>
-
-      <s-section slot="aside" heading="Next steps">
-        <s-unordered-list>
-          <s-list-item>
-            Build an{" "}
-            <s-link
-              href="https://shopify.dev/docs/apps/getting-started/build-app-example"
-              target="_blank"
-            >
-              example app
-            </s-link>
-          </s-list-item>
-          <s-list-item>
-            Explore Shopify&apos;s API with{" "}
-            <s-link
-              href="https://shopify.dev/docs/apps/tools/graphiql-admin-api"
-              target="_blank"
-            >
-              GraphiQL
-            </s-link>
-          </s-list-item>
-        </s-unordered-list>
       </s-section>
     </s-page>
   );

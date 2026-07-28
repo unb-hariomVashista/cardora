@@ -19,7 +19,10 @@ export default function App() {
     <AppProvider embedded apiKey={apiKey}>
       <s-app-nav>
         <s-link href="/app">Home</s-link>
-        <s-link href="/app/additional">Additional page</s-link>
+        <s-link href="/app/gift-cards">Gift Cards</s-link>
+        <s-link href="/app/gift-cards">Bulk Editor</s-link>
+        <s-link href="/app/gift-cards">Export</s-link>
+        <s-link href="/app/gift-cards">Activity Log</s-link>
       </s-app-nav>
       <Outlet />
     </AppProvider>
