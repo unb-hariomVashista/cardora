@@ -1,26 +1,36 @@
-FROM node:20-alpine
+# --- Build Stage ---
+FROM node:20-alpine AS builder
 RUN apk add --no-cache openssl
-
-# Install pnpm globally
 RUN npm install -g pnpm
+WORKDIR /app
 
-EXPOSE 3000
+# Install all dependencies (including devDependencies) to run the build
+COPY package.json pnpm-workspace.yaml* pnpm-lock.yaml* ./
+RUN pnpm install --frozen-lockfile
 
+COPY . .
+RUN pnpm run build
+
+# --- Production Runner Stage ---
+FROM node:20-alpine AS runner
+RUN apk add --no-cache openssl
+RUN npm install -g pnpm
 WORKDIR /app
 
 ENV NODE_ENV=production
 
-# Copy package files and pnpm lockfile
+# Install only production dependencies
 COPY package.json pnpm-workspace.yaml* pnpm-lock.yaml* ./
-
-# Install dependencies using pnpm
 RUN pnpm install --prod --frozen-lockfile
 
-# Copy the rest of the application files
-COPY . .
+# Copy Prisma schema and migrations (needed for migrations on startup)
+COPY --from=builder /app/prisma ./prisma
+RUN pnpm prisma generate
 
-# Run build
-RUN pnpm run build
+# Copy built assets
+COPY --from=builder /app/build ./build
 
-# Start the app
+EXPOSE 3000
+
+# Start application using docker-start script (runs migration & boots server)
 CMD ["pnpm", "run", "docker-start"]
