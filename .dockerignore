@@ -1,3 +1,14 @@
-.cache
-build
 node_modules
+npm-debug.log
+build
+.cache
+.git
+.github
+.gemini
+.react-router
+.env
+scratch
+Dockerfile
+docker-compose.yml
+deployment_guide.md
+*.md
