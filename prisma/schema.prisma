@@ -32,3 +32,13 @@ model Session {
   refreshToken        String?
   refreshTokenExpires DateTime?
 }
+
+model ActivityLog {
+  id          String   @id @default(uuid())
+  shop        String
+  action      String   // "Autogenerate" | "CSV Import" | "Logs Purged"
+  description String
+  performedBy String
+  createdAt   DateTime @default(now())
+}
+
