@@ -1,18 +1,26 @@
 FROM node:20-alpine
 RUN apk add --no-cache openssl
 
+# Install pnpm globally
+RUN npm install -g pnpm
+
 EXPOSE 3000
 
 WORKDIR /app
 
 ENV NODE_ENV=production
 
-COPY package.json package-lock.json* ./
+# Copy package files and pnpm lockfile
+COPY package.json pnpm-workspace.yaml* pnpm-lock.yaml* ./
 
-RUN npm ci --omit=dev && npm cache clean --force
+# Install dependencies using pnpm
+RUN pnpm install --prod --frozen-lockfile
 
+# Copy the rest of the application files
 COPY . .
 
-RUN npm run build
+# Run build
+RUN pnpm run build
 
-CMD ["npm", "run", "docker-start"]
+# Start the app
+CMD ["pnpm", "run", "docker-start"]
