@@ -1,7 +1,7 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
 client_id = "af33583dacfa9c724fe6a66740f909da"
-application_url = "https://example.com"
+application_url = "https://cardora.unbundl.com/app"
 embedded = true
 name = "Cardora"
 
@@ -20,9 +20,16 @@ api_version = "2026-10"
   uri = "/webhooks/app/scopes_update"
   topics = [ "app/scopes_update" ]
 
+  [[webhooks.subscriptions]]
+  compliance_topics = [
+    "customers/redact",
+    "customers/data_request",
+    "shop/redact"
+  ]
+  uri = "/webhooks/compliance"
+
 [auth]
-redirect_urls = [ "https://example.com/api/auth" ]
+redirect_urls = [ "https://cardora.unbundl.com/api/auth" ]
 
 [build]
-include_config_on_deploy = true
 automatically_update_urls_on_dev = true

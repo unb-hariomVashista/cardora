@@ -17,6 +17,14 @@ export function SuccessBanner({
 }: SuccessBannerProps) {
   if (!showSuccessBanner || createdCardsList.length === 0) return null;
 
+  const handleCopyAll = () => {
+    const codes = createdCardsList.map((card: any) => card.code).join("\n");
+    navigator.clipboard.writeText(codes);
+    shopify.toast.show(
+      createdCardsList.length > 1 ? "All codes copied" : "Code copied"
+    );
+  };
+
   return (
     <div className="success-banner" style={{ flexDirection: "column", alignItems: "stretch", gap: "12px" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
@@ -54,19 +62,18 @@ export function SuccessBanner({
             <span style={{ fontFamily: "monospace", fontSize: "14px", fontWeight: "600", color: "#303030" }}>
               {card.code}
             </span>
-            <button
-              type="button"
-              className="success-banner-copy-btn"
-              style={{ padding: "4px 10px", fontSize: "11px", height: "auto" }}
-              onClick={() => {
-                navigator.clipboard.writeText(card.code);
-                shopify.toast.show("Code copied");
-              }}
-            >
-              Copy
-            </button>
           </div>
         ))}
+      </div>
+
+      <div style={{ display: "flex", justifyContent: "flex-end" }}>
+        <button
+          type="button"
+          className="success-banner-copy-btn"
+          onClick={handleCopyAll}
+        >
+          {createdCardsList.length > 1 ? "Copy All Codes" : "Copy Code"}
+        </button>
       </div>
     </div>
   );
