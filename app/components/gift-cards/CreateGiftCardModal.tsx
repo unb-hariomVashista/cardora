@@ -458,27 +458,29 @@ export function CreateGiftCardModal({
               </div>
             )}
             
-            <button
-              type="button"
-              className="btn-secondary"
-              style={{ padding: "8px 16px", fontSize: "14px" }}
-              onClick={handleCloseModal}
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="btn-primary"
-              style={{
-                padding: "8px 16px",
-                fontSize: "14px",
-                backgroundColor: "#5c36cd",
-                color: "#ffffff",
-                border: "none"
-              }}
-            >
-              {modalTab === "autogenerate" ? "Create" : "Upload and preview"}
-            </button>
+            <div className="modal-footer-actions">
+              <button
+                type="button"
+                className="btn-secondary"
+                style={{ padding: "8px 16px", fontSize: "14px" }}
+                onClick={handleCloseModal}
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="btn-primary"
+                style={{
+                  padding: "8px 16px",
+                  fontSize: "14px",
+                  backgroundColor: "#5c36cd",
+                  color: "#ffffff",
+                  border: "none"
+                }}
+              >
+                {modalTab === "autogenerate" ? "Create" : "Upload and preview"}
+              </button>
+            </div>
           </div>
         </Form>
       </div>

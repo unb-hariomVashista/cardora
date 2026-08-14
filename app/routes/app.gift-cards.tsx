@@ -233,12 +233,12 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       const countJson = await countResponse.json();
       const currentCount = countJson.data?.giftCardsCount?.count || 0;
 
-      if (currentCount + requestedQuantity > 1000) {
+      if (currentCount + requestedQuantity > 20) {
         return {
           giftCards: [],
           errors: [
             {
-              message: `Creating ${requestedQuantity} gift card(s) would exceed the Free Plan limit of 1,000 total gift cards (current: ${currentCount}). Please upgrade to the Paid Plan to create unlimited gift cards.`,
+              message: `Creating ${requestedQuantity} gift card(s) would exceed the Free Plan limit of 20 total gift cards (current: ${currentCount}). Please upgrade to the Paid Plan to create unlimited gift cards.`,
             },
           ],
         };
@@ -778,15 +778,15 @@ export default function GiftCards() {
                 {loaderData.hasPaidPlan ? "Paid Plan" : "Free Plan"}
               </span>
               <span style={{ fontSize: "14px", fontWeight: "600", color: "#303030" }}>
-                {loaderData.hasPaidPlan ? "Unlimited Gift Cards" : "Up to 1,000 Gift Cards"}
+                {loaderData.hasPaidPlan ? "Unlimited Gift Cards" : "Up to 20 Gift Cards"}
               </span>
             </div>
             
             {!loaderData.hasPaidPlan ? (
               <div style={{ display: "flex", flexDirection: "column", gap: "4px", maxWidth: "400px", marginTop: "4px" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: "12px", color: "#5c5c5c", fontWeight: "500" }}>
-                  <span>Usage: {loaderData.stats.total.toLocaleString()} / 1,000</span>
-                  <span>{((loaderData.stats.total / 1000) * 100).toFixed(0)}%</span>
+                  <span>Usage: {loaderData.stats.total.toLocaleString()} / 20</span>
+                  <span>{((loaderData.stats.total / 20) * 100).toFixed(0)}%</span>
                 </div>
                 <div style={{
                   width: "100%",
@@ -796,7 +796,7 @@ export default function GiftCards() {
                   overflow: "hidden"
                 }}>
                   <div style={{
-                    width: `${Math.min(100, (loaderData.stats.total / 1000) * 100)}%`,
+                    width: `${Math.min(100, (loaderData.stats.total / 20) * 100)}%`,
                     height: "100%",
                     backgroundColor: "#5c36cd",
                     borderRadius: "4px",
