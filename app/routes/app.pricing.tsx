@@ -34,6 +34,21 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const subscribed = url.searchParams.get("subscribed") === "true";
   const downgraded = url.searchParams.get("downgraded") === "true";
 
+  if (subscribed) {
+    try {
+      await db.activityLog.create({
+        data: {
+          shop: session.shop,
+          action: "Plan Upgraded",
+          description: "Upgraded subscription to Pro Plan ($4/mo, Unlimited gift cards)",
+          performedBy: "Merchant",
+        },
+      });
+    } catch (err) {
+      console.error("[Cardora] Failed to record ActivityLog for Upgrade:", err);
+    }
+  }
+
   return {
     hasPaidPlan,
     giftCardsCount,
@@ -50,7 +65,13 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
   if (formAction === "upgrade") {
     const url = new URL(request.url);
-    const returnUrl = `${url.origin}/app/gift-cards`;
+    const shopHandle = session.shop.replace(".myshopify.com", "");
+    const apiKey = process.env.SHOPIFY_API_KEY;
+
+    const returnUrl = (apiKey && shopHandle)
+      ? `https://admin.shopify.com/store/${shopHandle}/apps/${apiKey}/app/pricing?subscribed=true`
+      : `${url.origin}/app/pricing?subscribed=true`;
+
     return await billing.request({
       plan: "monthlyPaid",
       isTest: true,
@@ -459,7 +480,25 @@ export default function PricingPage() {
 }
 
 export function ErrorBoundary() {
-  return boundary.error(useRouteError());
+  const error: any = useRouteError();
+
+  useEffect(() => {
+    if (error?.data && typeof error.data === "string" && error.data.includes("<script")) {
+      const div = document.createElement("div");
+      div.innerHTML = error.data;
+      const scripts = div.querySelectorAll("script");
+      scripts.forEach((oldScript) => {
+        const newScript = document.createElement("script");
+        Array.from(oldScript.attributes).forEach((attr) =>
+          newScript.setAttribute(attr.name, attr.value)
+        );
+        newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+        document.body.appendChild(newScript);
+      });
+    }
+  }, [error]);
+
+  return boundary.error(error);
 }
 
 export const headers: HeadersFunction = (headersArgs) => {
