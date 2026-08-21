@@ -219,11 +219,11 @@ export default function Index() {
   const generateProduct = () => fetcher.submit({}, { method: "POST" });
 
   return (
-    <s-page heading="Cardora">
+    <s-page heading="Cardora - Gift Card Manager">
       {/* Premium Hero Banner */}
       <div className="hero-banner">
         <div className="hero-content">
-          <h1 className="hero-title">Welcome to Cardora</h1>
+          <h1 className="hero-title">Welcome to Cardora - Gift Card Manager</h1>
           <p className="hero-subtitle">
             Create, manage, and track your store's gift cards in one place. Boost merchant sales, run custom campaigns, and retain loyal customers with ease.
           </p>

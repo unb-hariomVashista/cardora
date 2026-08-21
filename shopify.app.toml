@@ -3,7 +3,7 @@
 client_id = "af33583dacfa9c724fe6a66740f909da"
 application_url = "https://cardora.unbundl.com/app"
 embedded = true
-name = "Cardora"
+name = "Cardora - Gift Card Manager"
 
 [access_scopes]
 # Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes

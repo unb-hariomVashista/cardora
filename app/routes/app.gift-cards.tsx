@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import type { ActionFunctionArgs, HeadersFunction, LoaderFunctionArgs } from "react-router";
-import { Form, useLoaderData, useActionData, useSubmit, useSearchParams, useNavigation, useRouteError } from "react-router";
+import { Form, redirect, useLoaderData, useActionData, useSubmit, useSearchParams, useNavigation, useRouteError } from "react-router";
 import { authenticate } from "../shopify.server";
 import { boundary } from "@shopify/shopify-app-react-router/server";
 import { useAppBridge } from "@shopify/app-bridge-react";
@@ -172,6 +172,8 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     balanceStatus,
     expiresBefore,
     hasPaidPlan,
+    subscribed: url.searchParams.get("subscribed") === "true",
+    downgraded: url.searchParams.get("downgraded") === "true",
     stats: {
       total: totalCount,
       active: activeCount,
@@ -195,6 +197,37 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       isTest: true,
       returnUrl,
     } as any);
+  }
+
+  if (formAction === "downgrade") {
+    const billingCheck = await billing.check({
+      plans: ["monthlyPaid"],
+      isTest: true,
+    } as any);
+
+    const subscription = billingCheck.appSubscriptions?.[0];
+    if (subscription?.id) {
+      await billing.cancel({
+        subscriptionId: subscription.id,
+        isTest: true,
+        prorate: true,
+      });
+    }
+
+    try {
+      await db.activityLog.create({
+        data: {
+          shop: session.shop,
+          action: "Plan Downgraded",
+          description: "Downgraded subscription to Free Plan ($0/mo, 20 gift cards limit)",
+          performedBy: "Merchant",
+        },
+      });
+    } catch (err) {
+      console.error("[Cardora] Failed to record ActivityLog for Downgrade:", err);
+    }
+
+    return redirect("/app/gift-cards?downgraded=true");
   }
 
   const modalTab = formData.get("modalTab") as string || "autogenerate";
@@ -591,6 +624,15 @@ export default function GiftCards() {
     setSelectedCardIds([]); // Clear selection when search filters change
   }, [loaderData.search, loaderData.status, loaderData.balanceStatus, loaderData.expiresBefore]);
 
+  // Handle plan upgrade / downgrade feedback toasts
+  useEffect(() => {
+    if (loaderData.subscribed) {
+      shopify.toast.show("Successfully upgraded to Paid Plan!");
+    } else if (loaderData.downgraded) {
+      shopify.toast.show("Successfully downgraded to Free Plan.");
+    }
+  }, [loaderData.subscribed, loaderData.downgraded, shopify]);
+
   // Debounce search submission to auto-search as user types
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
@@ -811,28 +853,73 @@ export default function GiftCards() {
             )}
           </div>
 
-          {!loaderData.hasPaidPlan && (
-            <Form method="post">
-              <input type="hidden" name="action" value="upgrade" />
-              <button
-                type="submit"
-                className="action-btn-secondary"
-                style={{
-                  backgroundColor: "#5c36cd",
-                  color: "#ffffff",
-                  border: "none",
-                  fontWeight: "600",
-                  padding: "10px 18px",
-                  fontSize: "14px",
-                  boxShadow: "0 2px 8px rgba(92, 54, 205, 0.25)",
-                  cursor: "pointer",
-                  transition: "all 0.2s"
-                }}
-              >
-                Upgrade to Paid ($4/mo)
-              </button>
-            </Form>
-          )}
+          <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+            <a
+              href="/app/pricing"
+              style={{
+                textDecoration: "none",
+                color: "#5c36cd",
+                fontWeight: "600",
+                fontSize: "13px",
+                padding: "8px 14px",
+                borderRadius: "6px",
+                border: "1px solid #d8b4fe",
+                backgroundColor: "#ffffff",
+                transition: "all 0.2s ease"
+              }}
+            >
+              Manage Plans
+            </a>
+
+            {!loaderData.hasPaidPlan ? (
+              <Form method="post">
+                <input type="hidden" name="action" value="upgrade" />
+                <button
+                  type="submit"
+                  className="action-btn-secondary"
+                  style={{
+                    backgroundColor: "#5c36cd",
+                    color: "#ffffff",
+                    border: "none",
+                    fontWeight: "600",
+                    padding: "9px 16px",
+                    fontSize: "13px",
+                    borderRadius: "6px",
+                    boxShadow: "0 2px 8px rgba(92, 54, 205, 0.25)",
+                    cursor: "pointer",
+                    transition: "all 0.2s"
+                  }}
+                >
+                  Upgrade to Paid ($4/mo)
+                </button>
+              </Form>
+            ) : (
+              <Form method="post">
+                <input type="hidden" name="action" value="downgrade" />
+                <button
+                  type="submit"
+                  style={{
+                    backgroundColor: "#ffffff",
+                    color: "#dc2626",
+                    border: "1px solid #f87171",
+                    fontWeight: "600",
+                    padding: "9px 16px",
+                    fontSize: "13px",
+                    borderRadius: "6px",
+                    cursor: "pointer",
+                    transition: "all 0.2s ease"
+                  }}
+                  onClick={(e) => {
+                    if (!confirm("Are you sure you want to downgrade to the Free Plan?")) {
+                      e.preventDefault();
+                    }
+                  }}
+                >
+                  Downgrade to Free
+                </button>
+              </Form>
+            )}
+          </div>
         </div>
 
         {/* KPI Grid */}
